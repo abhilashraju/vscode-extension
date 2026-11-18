@@ -1,0 +1,193 @@
+{
+  "name": "bmcshell-terminal-profile",
+  "displayName": "bmcshell Terminal",
+  "description": "Open the bmcshell (Spring Shell) application in an IDE terminal, from a local jar or the bmcshell Docker image",
+  "version": "1.0.0",
+  "publisher": "local-dev",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "terminal": {
+      "profiles": [
+        {
+          "id": "bmcshellProfile.terminalProfile",
+          "title": "bmcshell",
+          "icon": "terminal"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "bmcshellProfile.openTerminal",
+        "title": "bmcshell Profile: Open Terminal",
+        "category": "bmcshell Profile"
+      },
+      {
+        "command": "bmcshellProfile.openSplitTerminals",
+        "title": "bmcshell Profile: Open Two Terminals (Split, ports 8443 + 8444)",
+        "category": "bmcshell Profile"
+      },
+      {
+        "command": "bmcshellProfile.selectJar",
+        "title": "bmcshell Profile: Select Jar File",
+        "category": "bmcshell Profile"
+      },
+      {
+        "command": "bmcshellProfile.openJournal",
+        "title": "bmcshell Profile: Open Journal Stream",
+        "category": "bmcshell Profile"
+      },
+      {
+        "command": "bmcshellProfile.disconnectJournal",
+        "title": "bmcshell Profile: Disconnect Journal Stream",
+        "category": "bmcshell Profile"
+      },
+      {
+        "command": "bmcshellProfile.addCredential",
+        "title": "Add / Store Credential (Username & Password)",
+        "category": "Terminal Credentials"
+      },
+      {
+        "command": "bmcshellProfile.insertPassword",
+        "title": "Insert Password to Terminal (Selection Box)",
+        "category": "Terminal Credentials"
+      },
+      {
+        "command": "bmcshellProfile.insertUsername",
+        "title": "Insert Username to Terminal (Selection Box)",
+        "category": "Terminal Credentials"
+      },
+      {
+        "command": "bmcshellProfile.insertCredential",
+        "title": "Insert Credential (Username/Password) to Terminal",
+        "category": "Terminal Credentials"
+      },
+      {
+        "command": "bmcshellProfile.deleteCredential",
+        "title": "Delete Stored Credential",
+        "category": "Terminal Credentials"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "bmcshellProfile.insertPassword",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "terminalFocus"
+      },
+      {
+        "command": "bmcshellProfile.insertUsername",
+        "key": "ctrl+alt+u",
+        "mac": "cmd+alt+u",
+        "when": "terminalFocus"
+      },
+      {
+        "command": "bmcshellProfile.insertCredential",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "terminalFocus"
+      }
+    ],
+    "configuration": {
+      "title": "bmcshell Terminal",
+      "properties": {
+        "bmcshellProfile.mode": {
+          "type": "string",
+          "default": "jar",
+          "enum": [
+            "jar",
+            "docker"
+          ],
+          "enumDescriptions": [
+            "Run the bmcshell jar with a local Java 21+ runtime",
+            "Run the bmcshell Docker image (same options as bmcshell.sh)"
+          ],
+          "description": "How to launch bmcshell"
+        },
+        "bmcshellProfile.jarPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to a custom bmcshell jar. Leave empty to use the jar bundled with the extension (`bin/bmcshell.jar`). Use the `bmcshell Profile: Select Jar File` command to pick one."
+        },
+        "bmcshellProfile.javaPath": {
+          "type": "string",
+          "default": "java",
+          "description": "Java executable (Java 21 or newer is required)"
+        },
+        "bmcshellProfile.jvmArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Extra JVM arguments passed before -jar, one argument per entry"
+        },
+        "bmcshellProfile.port": {
+          "type": "number",
+          "default": 8443,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Port for the bmcshell embedded server (passed as -Dserver.port)"
+        },
+        "bmcshellProfile.secondPort": {
+          "type": "number",
+          "default": 8444,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Port for the second bmcshell server (split terminal and second journal pane). Must differ from bmcshellProfile.port"
+        },
+        "bmcshellProfile.workingDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "Working directory for bmcshell (history, machines files). Empty uses ~/.bmcshell"
+        },
+        "bmcshellProfile.dockerImage": {
+          "type": "string",
+          "default": "bmcshell:latest",
+          "description": "Docker image used when bmcshellProfile.mode is 'docker'"
+        },
+        "bmcshellProfile.journal.host": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "description": "Host name of the running bmcshell servers whose /sse/journal streams are shown (ports are bmcshellProfile.port and bmcshellProfile.secondPort)"
+        },
+        "bmcshellProfile.journal.caCertPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "PEM file used to verify the bmcshell server certificate (the CA certificate, or the server certificate itself for a self-signed setup). Leave empty to use the system trust store. Certificate verification cannot be disabled."
+        },
+        "bmcshellProfile.journal.tlsServerName": {
+          "type": "string",
+          "default": "",
+          "description": "Host name expected in the server certificate when it differs from bmcshellProfile.journal.host (e.g. the CN of the certificate)"
+        },
+        "bmcshellProfile.journal.autoReconnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reconnect with backoff when the stream drops"
+        },
+        "bmcshellProfile.journal.maxLines": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 100,
+          "maximum": 100000,
+          "description": "Maximum number of journal lines kept in the viewer"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "echo 'No build step required'",
+    "lint": "node --check src/extension.js && node --check src/launcher.js && node --check src/journalClient.js && node --check src/journalView.js && node --check src/journalPanel.js && node --check src/credentialManager.js",
+    "test": "node test/journalClient.test.js && node test/journalPanel.test.js && node test/credentialManager.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.82.0"
+  }
+}

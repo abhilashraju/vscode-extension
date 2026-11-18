@@ -1,0 +1,128 @@
+{
+  "name": "github-pr-viewer",
+  "displayName": "GitHub Pull Request Viewer",
+  "description": "List pull requests raised in GitHub with owner and repository filters, live search and instant navigation in VS Code",
+  "version": "1.0.0",
+  "publisher": "local-dev",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "github-pr-viewer-container",
+          "title": "GitHub Pull Requests",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "github-pr-viewer-container": [
+        {
+          "type": "webview",
+          "id": "githubPrViewer.sidebarView",
+          "name": "Pull Requests",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "githubPrViewer.openDashboard",
+        "title": "GitHub PRs: Open Full Dashboard Panel",
+        "category": "GitHub PRs"
+      },
+      {
+        "command": "githubPrViewer.refresh",
+        "title": "GitHub PRs: Refresh Pull Requests",
+        "category": "GitHub PRs",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "githubPrViewer.setToken",
+        "title": "GitHub PRs: Set Access Token",
+        "category": "GitHub PRs"
+      },
+      {
+        "command": "githubPrViewer.clearToken",
+        "title": "GitHub PRs: Clear Access Token",
+        "category": "GitHub PRs"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "githubPrViewer.refresh",
+          "when": "view == githubPrViewer.sidebarView",
+          "group": "navigation"
+        },
+        {
+          "command": "githubPrViewer.openDashboard",
+          "when": "view == githubPrViewer.sidebarView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GitHub Pull Request Viewer",
+      "properties": {
+        "githubPrViewer.apiUrl": {
+          "type": "string",
+          "default": "https://api.github.com",
+          "description": "Base HTTPS URL of the GitHub REST API (use https://<host>/api/v3 for GitHub Enterprise Server)"
+        },
+        "githubPrViewer.username": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub login used for 'My' scopes when no access token is set"
+        },
+        "githubPrViewer.defaultScope": {
+          "type": "string",
+          "default": "author",
+          "enum": [
+            "author",
+            "assignee",
+            "review-requested",
+            "involves",
+            "any"
+          ],
+          "description": "Default relationship between you and the listed pull requests ('any' requires an owner or repository filter)"
+        },
+        "githubPrViewer.defaultOwner": {
+          "type": "string",
+          "default": "",
+          "description": "Default owner (user or organization) filter, e.g. openbmc"
+        },
+        "githubPrViewer.defaultRepo": {
+          "type": "string",
+          "default": "",
+          "description": "Default repository filter, e.g. bmcweb or openbmc/bmcweb"
+        },
+        "githubPrViewer.limit": {
+          "type": "number",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of pull requests to fetch in a single query"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "echo 'No build step required'",
+    "lint": "node --check src/extension.js && node --check src/githubService.js && node --check src/prWebviewProvider.js && node --check src/webviewHtml.js && node --check src/diffParser.js && node --check src/prDetailPanel.js && node --check src/prDetailHtml.js",
+    "test": "node test/pr.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.82.0"
+  }
+}

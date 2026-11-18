@@ -1,0 +1,100 @@
+{
+  "name": "box-explorer",
+  "displayName": "Box Explorer",
+  "description": "Browse, search, open, download and upload Box.com files from the sidebar",
+  "version": "1.0.0",
+  "publisher": "local-dev",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "box-explorer-container",
+          "title": "Box",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "box-explorer-container": [
+        {
+          "type": "webview",
+          "id": "boxExplorer.sidebarView",
+          "name": "Box Files",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "boxExplorer.refresh",
+        "title": "Box: Refresh",
+        "category": "Box",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "boxExplorer.setToken",
+        "title": "Box: Set Access Token",
+        "category": "Box"
+      },
+      {
+        "command": "boxExplorer.setClientCredentials",
+        "title": "Box: Set Client Credentials (Client ID / Secret / Enterprise ID)",
+        "category": "Box"
+      },
+      {
+        "command": "boxExplorer.clearToken",
+        "title": "Box: Clear Credentials",
+        "category": "Box"
+      },
+      {
+        "command": "boxExplorer.uploadActiveFile",
+        "title": "Box: Upload Active File to Current Folder",
+        "category": "Box"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "boxExplorer.refresh",
+          "when": "view == boxExplorer.sidebarView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Box Explorer",
+      "properties": {
+        "boxExplorer.rootFolderId": {
+          "type": "string",
+          "default": "0",
+          "description": "Folder ID shown as the root of the browser (0 is All Files)"
+        },
+        "boxExplorer.pageSize": {
+          "type": "number",
+          "default": 100,
+          "description": "Number of items fetched per request when listing a folder or searching"
+        },
+        "boxExplorer.maxDownloadMB": {
+          "type": "number",
+          "default": 50,
+          "description": "Largest file, in MB, that can be opened or downloaded"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "node --check src/extension.js && node --check src/boxService.js && node --check src/boxWebviewProvider.js && node --check src/webviewHtml.js && node --check test/box.test.js",
+    "test": "node test/box.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.75.0"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "name": "gerrit-review-viewer",
+  "displayName": "Gerrit Review Viewer",
+  "description": "Interactive Gerrit change tracker with live search, filtering, and instant navigation in VS Code",
+  "version": "1.0.0",
+  "publisher": "local-dev",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gerrit-viewer-container",
+          "title": "Gerrit Reviews",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "gerrit-viewer-container": [
+        {
+          "type": "webview",
+          "id": "gerritViewer.sidebarView",
+          "name": "Gerrit Reviews",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gerritViewer.openDashboard",
+        "title": "Gerrit: Open Full Dashboard Panel",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerritViewer.refresh",
+        "title": "Gerrit: Refresh Reviews",
+        "category": "Gerrit",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gerritViewer.setCredentials",
+        "title": "Gerrit: Set Authentication Credentials",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerritViewer.clearCredentials",
+        "title": "Gerrit: Clear Authentication Credentials",
+        "category": "Gerrit"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gerritViewer.refresh",
+          "when": "view == gerritViewer.sidebarView",
+          "group": "navigation"
+        },
+        {
+          "command": "gerritViewer.openDashboard",
+          "when": "view == gerritViewer.sidebarView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Gerrit Review Viewer",
+      "properties": {
+        "gerritViewer.host": {
+          "type": "string",
+          "default": "https://gerrit.openbmc.org",
+          "description": "Base URL of the Gerrit instance"
+        },
+        "gerritViewer.defaultQuery": {
+          "type": "string",
+          "default": "owner:self",
+          "description": "Default search query passed to Gerrit REST API (e.g., owner:self, status:open)"
+        },
+        "gerritViewer.limit": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of changes to fetch in a single query"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "echo 'No build step required'",
+    "lint": "node --check src/extension.js && node --check src/gerritService.js && node --check src/gerritDiff.js && node --check src/changeDetailHtml.js && node --check src/changeDetailPanel.js && node --check src/gerritWebviewProvider.js && node --check src/webviewHtml.js && node --check test/gerrit.test.js",
+    "test": "node test/gerrit.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.75.0"
+  }
+}
